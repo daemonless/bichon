@@ -1,0 +1,47 @@
+name: bichon
+
+x-daemonless:
+  title: "Bichon"
+  icon: ":material-email:"
+  category: "Communication"
+  description: "High-performance email archiver and search tool on FreeBSD."
+  upstream_url: "https://github.com/rustmailer/bichon"
+  web_url: "https://github.com/rustmailer/bichon"
+  user: "bsd"
+  mlock: false
+  
+  healthcheck:
+    port: 15630
+    path: "/"
+  
+  docs:
+    env:
+      PUID: "User ID for the application process"
+      PGID: "Group ID for the application process"
+      TZ: "Timezone for the container"
+      BICHON_HTTP_PORT: "HTTP server port (default: 15630)"
+      BICHON_ENCRYPT_PASSWORD: "Encryption password for core database"
+    volumes:
+      /data: "Core data and search indices"
+    ports:
+      "15630": "Web UI / API"
+
+services:
+  bichon:
+    image: ghcr.io/daemonless/bichon:latest
+    container_name: bichon
+    restart: unless-stopped
+    
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - BICHON_ENCRYPT_PASSWORD=changeme
+
+    volumes:
+      - /path/to/containers/bichon:/data
+
+    ports:
+      - published: 15630
+        target: 15630
+

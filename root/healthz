@@ -1,0 +1,11 @@
+#!/bin/sh
+# Daemonless standard healthcheck for bichon
+
+PORT="${BICHON_HTTP_PORT:-15630}"
+
+# Check HTTP endpoint
+if fetch -o /dev/null "http://127.0.0.1:${PORT}/" >/dev/null 2>&1; then
+    exit 0
+else
+    exit 1
+fi

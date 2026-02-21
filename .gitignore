@@ -1,0 +1,10 @@
+# Rust artifacts
+target/
+**/*.rs.bk
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Note: web/dist IS tracked for now as a workaround for FreeBSD SWC issues
+!web/dist/

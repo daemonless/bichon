@@ -1,0 +1,15 @@
+#!/bin/sh
+# Bichon s6 service
+
+echo "[INFO] Starting Bichon..."
+
+# Use environment variables with defaults
+PORT="${BICHON_HTTP_PORT:-15630}"
+ROOT_DIR="${BICHON_ROOT_DIR:-/data}"
+
+# Standard start command for bichon
+# Note: --bichon-http-bind-address is not supported in this version
+exec /usr/local/bin/bichon \
+    --bichon-http-port "$PORT" \
+    --bichon-root-dir "$ROOT_DIR" \
+    --bichon-http-compression-enabled

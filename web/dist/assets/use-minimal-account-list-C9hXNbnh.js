@@ -1,0 +1,1 @@
+import{m as e}from"./api-DO-U-qaS.js";import{i as l}from"./index-DdbbjDqD.js";const c=()=>{const{data:i,...s}=l({queryKey:["minimal-account-list"],queryFn:e});return{accountsOptions:i?i.map(t=>({label:t.email,value:`${t.id}`})):[],minimalList:i,getEmailById:t=>{if(!i)return null;const n=i.find(a=>`${a.id}`==`${t}`);return(n==null?void 0:n.email)||null},...s}};export{c as u};

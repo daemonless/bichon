@@ -1,0 +1,1 @@
+import{P as t}from"./index-D0wVI-Kh.js";import{c as o}from"./index-DdbbjDqD.js";import"./alert-D2Dsd-tD.js";import"./user-CHXk-ipJ.js";import"./use-minimal-account-list-C9hXNbnh.js";import"./api-DO-U-qaS.js";import"./circle-check-DxXakV4O.js";import"./circle-x-CLtylk_0.js";const s=o("/_authenticated/settings/")({component:t});export{s as Route};
