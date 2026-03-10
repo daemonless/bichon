@@ -9,8 +9,43 @@ on:
   workflow_dispatch:
 
 jobs:
+  build-web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get latest Bichon tag
+        id: tag
+        run: |
+          BICHON_TAG=$(git ls-remote --tags --sort="v:refname" \
+            https://github.com/rustmailer/bichon.git | \
+            grep -v '\^{}' | tail -n1 | sed 's/.*\///')
+          echo "tag=${BICHON_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Checkout rustmailer/bichon
+        uses: actions/checkout@v4
+        with:
+          repository: rustmailer/bichon
+          ref: ${{ steps.tag.outputs.tag }}
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build frontend
+        run: cd web && pnpm install && pnpm run build
+
+      - name: Upload web/dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: web/dist/
+
   build:
+    needs: build-web
     uses: daemonless/dbuild/.github/workflows/daemonless-build.yaml@main
     with:
       image_name: bichon
+      pre_artifact_name: web-dist
+      pre_artifact_path: web/dist/
     secrets: inherit

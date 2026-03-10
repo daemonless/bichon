@@ -22,7 +22,8 @@ RUN BICHON_TAG=$(git ls-remote --tags --sort="v:refname" https://github.com/rust
     git clone --depth 1 -b "${BICHON_TAG}" https://github.com/rustmailer/bichon.git . && \
     echo "${BICHON_TAG}" > /build/version
 
-# Note: Frontend build (web/dist) must be present before cargo build.
+# Note: Frontend build (web/dist) is built on Linux in the build-web CI job
+# and passed as an artifact to this stage. SWC is not available on FreeBSD.
 # This folder is embedded into the Rust binary at compile time.
 COPY web/dist /build/web/dist
 

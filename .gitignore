@@ -6,5 +6,5 @@ target/
 .DS_Store
 Thumbs.db
 
-# Note: web/dist IS tracked for now as a workaround for FreeBSD SWC issues
-!web/dist/
+# web/dist is built by CI (build-web job) and passed as an artifact
+web/dist/

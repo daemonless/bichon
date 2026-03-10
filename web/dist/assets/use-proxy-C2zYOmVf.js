@@ -1,1 +1,0 @@
-import{i as n,cc as o}from"./index-DdbbjDqD.js";const a=()=>{const{data:r,...s}=n({queryKey:["proxy-list"],queryFn:o,staleTime:6e5});return{proxyOptions:r?r.map(t=>({label:t.url,value:`${t.id}`})):[],proxyList:r,getUrlById:t=>{if(!r)return null;const e=r.find(l=>`${l.id}`==`${t}`);return(e==null?void 0:e.url)||null},...s}};export{a as u};
