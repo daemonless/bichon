@@ -1,0 +1,62 @@
+name: Update Frontend
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Daily at midnight
+  workflow_dispatch:
+
+jobs:
+  update-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout daemonless/bichon
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get latest Bichon tag
+        id: get_tag
+        run: |
+          BICHON_TAG=$(git ls-remote --tags --sort="v:refname" https://github.com/rustmailer/bichon.git | tail -n1 | sed 's/.*\///')
+          echo "tag=${BICHON_TAG}" >> $GITHUB_OUTPUT
+
+      - name: Checkout rustmailer/bichon (upstream)
+        uses: actions/checkout@v4
+        with:
+          repository: rustmailer/bichon
+          ref: ${{ steps.get_tag.outputs.tag }}
+          path: upstream
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Build Frontend
+        run: |
+          cd upstream/web
+          pnpm install
+          pnpm run build
+
+      - name: Copy Build Artifacts
+        run: |
+          rm -rf web/dist
+          mkdir -p web/dist
+          cp -r upstream/web/dist/* web/dist/
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add web/dist
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update frontend assets from rustmailer/bichon@${{ steps.get_tag.outputs.tag }}"
+            git push
+          fi
