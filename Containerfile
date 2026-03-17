@@ -44,7 +44,7 @@ LABEL org.opencontainers.image.title="Bichon" \
       org.opencontainers.image.licenses="GPL-3.0-only" \
       org.opencontainers.image.vendor="daemonless" \
       org.opencontainers.image.authors="daemonless" \
-      io.daemonless.category="Communication" \
+      io.daemonless.category="Utilities" \
       io.daemonless.port="15630" \
       io.daemonless.arch="${FREEBSD_ARCH}"
 

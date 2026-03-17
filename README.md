@@ -5,15 +5,27 @@ Source: dbuild templates
 
 # Bichon
 
+[![Build Status](https://img.shields.io/github/actions/workflow/status/daemonless/bichon/build.yaml?style=flat-square&label=Build&color=green)](https://github.com/daemonless/bichon/actions)
+[![Last Commit](https://img.shields.io/github/last-commit/daemonless/bichon?style=flat-square&label=Last+Commit&color=blue)](https://github.com/daemonless/bichon/commits)
+
 High-performance email archiver and search tool on FreeBSD.
 
 | | |
 |---|---|
 | **Port** | 15630 |
 | **Registry** | `ghcr.io/daemonless/bichon` |
-| **Docs** | [daemonless.io/images/bichon](https://daemonless.io/images/bichon/) |
 | **Source** | [https://github.com/rustmailer/bichon](https://github.com/rustmailer/bichon) |
 | **Website** | [https://github.com/rustmailer/bichon](https://github.com/rustmailer/bichon) |
+
+## Version Tags
+
+| Tag | Description | Best For |
+| :--- | :--- | :--- |
+| `latest` | **Upstream Binary**. Built from official release. | Most users. Matches Linux Docker behavior. |
+
+## Prerequisites
+
+Before deploying, ensure your host environment is ready. See the [Quick Start Guide](https://daemonless.io/guides/quick-start) for host setup instructions.
 
 ## Deployment
 
@@ -30,7 +42,7 @@ services:
       - TZ=UTC
       - BICHON_ENCRYPT_PASSWORD=changeme
     volumes:
-      - /path/to/data:/data
+      - "/path/to/containers/bichon/data:/data"
     ports:
       - 15630:15630
     healthcheck:
@@ -44,14 +56,13 @@ services:
 podman run -d --name bichon \
   -p 15630:15630 \
   --health-cmd {'port': 15630, 'path': '/'} \
-  -e PUID=@PUID@ \
-  -e PGID=@PGID@ \
-  -e TZ=@TZ@ \
+  -e PUID=1000 \
+  -e PGID=1000 \
+  -e TZ=UTC \
   -e BICHON_ENCRYPT_PASSWORD=changeme \
-  -v /path/to/data:/data \
+  -v /path/to/containers/bichon/data:/data \
   ghcr.io/daemonless/bichon:latest
 ```
-Access at: `http://localhost:15630`
 
 ### Ansible
 
@@ -63,17 +74,20 @@ Access at: `http://localhost:15630`
     state: started
     restart_policy: always
     env:
-      PUID: "@PUID@"
-      PGID: "@PGID@"
-      TZ: "@TZ@"
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "UTC"
       BICHON_ENCRYPT_PASSWORD: "changeme"
     ports:
       - "15630:15630"
     volumes:
-      - "/path/to/data:/data"
+      - "/path/to/containers/bichon/data:/data"
 ```
 
-## Configuration
+Access at: `http://localhost:15630`
+
+## Parameters
+
 ### Environment Variables
 
 | Variable | Default | Description |
@@ -82,19 +96,23 @@ Access at: `http://localhost:15630`
 | `PGID` | `1000` | Group ID for the application process |
 | `TZ` | `UTC` | Timezone for the container |
 | `BICHON_ENCRYPT_PASSWORD` | `changeme` | Encryption password for core database |
+
 ### Volumes
 
 | Path | Description |
 |------|-------------|
 | `/data` | Core data and search indices |
+
 ### Ports
 
 | Port | Protocol | Description |
 |------|----------|-------------|
 | `15630` | TCP | Web UI / API |
 
-## Notes
+**Architectures:** amd64
+**User:** `bsd` (UID/GID via PUID/PGID, defaults to 1000:1000)
+**Base:** FreeBSD 15.0
 
-- **Architectures:** amd64
-- **User:** `bsd` (UID/GID set via PUID/PGID)
-- **Base:** Built on `ghcr.io/daemonless/base` (FreeBSD)
+---
+
+Need help? Join our [Discord](https://discord.gg/Kb9tkhecZT) community.

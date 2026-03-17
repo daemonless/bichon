@@ -3,7 +3,7 @@ name: bichon
 x-daemonless:
   title: "Bichon"
   icon: ":material-email:"
-  category: "Communication"
+  category: "Utilities"
   description: "High-performance email archiver and search tool on FreeBSD."
   upstream_url: "https://github.com/rustmailer/bichon"
   web_url: "https://github.com/rustmailer/bichon"
