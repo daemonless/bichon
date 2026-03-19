@@ -4,12 +4,13 @@ x-daemonless:
   title: "Bichon"
   icon: ":material-email:"
   category: "Utilities"
-  description: "High-performance email archiver and search tool on FreeBSD."
+  description: "A lightweight, high-performance Rust email archiver with WebUI."
   upstream_url: "https://github.com/rustmailer/bichon"
   web_url: "https://github.com/rustmailer/bichon"
   user: "bsd"
   mlock: false
-  
+  appjail: true
+
   healthcheck:
     port: 15630
     path: "/"

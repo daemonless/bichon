@@ -38,7 +38,7 @@ ARG PACKAGES="FreeBSD-openssl zstd curl"
 
 # --- Metadata (Injected by Generator) ---
 LABEL org.opencontainers.image.title="Bichon" \
-      org.opencontainers.image.description="High-performance email archiver and search tool on FreeBSD." \
+      org.opencontainers.image.description="A lightweight, high-performance Rust email archiver with WebUI." \
       org.opencontainers.image.source="https://github.com/daemonless/bichon" \
       org.opencontainers.image.url="https://github.com/rustmailer/bichon" \
       org.opencontainers.image.licenses="GPL-3.0-only" \

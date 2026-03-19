@@ -8,7 +8,7 @@ Source: dbuild templates
 [![Build Status](https://img.shields.io/github/actions/workflow/status/daemonless/bichon/build.yaml?style=flat-square&label=Build&color=green)](https://github.com/daemonless/bichon/actions)
 [![Last Commit](https://img.shields.io/github/last-commit/daemonless/bichon?style=flat-square&label=Last+Commit&color=blue)](https://github.com/daemonless/bichon/commits)
 
-High-performance email archiver and search tool on FreeBSD.
+A lightweight, high-performance Rust email archiver with WebUI.
 
 | | |
 |---|---|
@@ -48,6 +48,52 @@ services:
     healthcheck:
       test: ["CMD", "{'port': 15630, 'path': '/'}"]
     restart: unless-stopped
+```
+
+### AppJail Director
+
+**.env**:
+
+```
+DIRECTOR_PROJECT=bichon
+PUID=1000
+PGID=1000
+TZ=UTC
+BICHON_ENCRYPT_PASSWORD=changeme
+```
+
+**appjail-director.yml**:
+
+```yaml
+options:
+  - virtualnet: ':<random> default'
+  - nat:
+services:
+  bichon:
+    name: bichon
+    options:
+      - container: 'boot args:--pull'
+    oci:
+      user: root
+      environment:
+        - PUID: !ENV '${PUID}'
+        - PGID: !ENV '${PGID}'
+        - TZ: !ENV '${TZ}'
+        - BICHON_ENCRYPT_PASSWORD: !ENV '${BICHON_ENCRYPT_PASSWORD}'
+    volumes:
+      - bichon_data: /data
+volumes:
+  bichon_data:
+    device: '/path/to/containers/bichon/data'
+```
+
+**Makejail**:
+
+```
+ARG tag=latest
+
+OPTION overwrite=force
+OPTION from=ghcr.io/daemonless/bichon:${tag}
 ```
 
 ### Podman CLI
