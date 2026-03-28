@@ -1,12 +1,12 @@
 {
   "image": "bichon",
-  "generated": "2026-03-19T18:15:16Z",
+  "generated": "2026-03-28T17:31:13Z",
   "tags": {
     "latest": {
       "arch": "amd64",
       "app_version": "0.3.7",
       "source": "upstream",
-      "generated": "2026-03-19T18:14:59Z",
+      "generated": "2026-03-28T17:30:56Z",
       "packages": {
         "freebsd": [
           {
@@ -130,6 +130,10 @@
             "version": "1.2.0,1"
           },
           {
+            "name": "ca_root_nss",
+            "version": "3.117_2"
+          },
+          {
             "name": "curl",
             "version": "8.17.0"
           },
@@ -200,7 +204,7 @@
         "rust": []
       },
       "summary": {
-        "freebsd": 45,
+        "freebsd": 46,
         "dotnet": 0,
         "go": 0,
         "java": 0,
@@ -209,7 +213,7 @@
         "python": 0,
         "ruby": 0,
         "rust": 0,
-        "total": 45
+        "total": 46
       }
     }
   }
