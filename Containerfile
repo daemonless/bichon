@@ -64,7 +64,8 @@ COPY --from=builder /build/target/release/bichon-admin /usr/local/bin/
 COPY root/ /
 
 # Set permissions
-RUN chmod +x /etc/services.d/bichon/run /healthz
+RUN chmod +x /etc/services.d/bichon/run /healthz && \
+    mkdir -p /data
 
 # Working directory for Bichon
 WORKDIR /data
