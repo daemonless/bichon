@@ -5,6 +5,9 @@
 # --------------------------------------------------------------------------
 
 ARG BASE_VERSION=15
+ARG UPSTREAM_URL="https://api.github.com/repos/rustmailer/bichon/releases/latest"
+ARG UPSTREAM_JQ=".tag_name"
+
 # --- Backend Builder Stage ---
 FROM ghcr.io/daemonless/base:${BASE_VERSION} AS builder
 
@@ -46,7 +49,9 @@ LABEL org.opencontainers.image.title="Bichon" \
       org.opencontainers.image.authors="daemonless" \
       io.daemonless.category="Utilities" \
       io.daemonless.port="15630" \
-      io.daemonless.arch="${FREEBSD_ARCH}"
+      io.daemonless.arch="${FREEBSD_ARCH}" \
+      io.daemonless.upstream-url="${UPSTREAM_URL}" \
+      io.daemonless.upstream-jq="${UPSTREAM_JQ}"
 
 # Install runtime dependencies
 RUN pkg update && \
