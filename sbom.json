@@ -1,11 +1,11 @@
 {
-  "generated": "2026-04-16T18:49:41Z",
+  "generated": "2026-04-30T07:21:34Z",
   "image": "bichon",
   "tags": {
     "latest": {
       "app_version": "0.3.7",
       "arch": "amd64",
-      "generated": "2026-04-16T18:48:19Z",
+      "generated": "2026-04-30T07:20:16Z",
       "packages": {
         "dotnet": [],
         "freebsd": [
@@ -83,7 +83,7 @@
           },
           {
             "name": "FreeBSD-openssl-lib",
-            "version": "15.0"
+            "version": "15.0p2"
           },
           {
             "name": "FreeBSD-pkg-bootstrap",
@@ -95,7 +95,7 @@
           },
           {
             "name": "FreeBSD-runtime",
-            "version": "15.0"
+            "version": "15.0p6"
           },
           {
             "name": "FreeBSD-tcpd",
@@ -155,7 +155,7 @@
           },
           {
             "name": "libnghttp2",
-            "version": "1.68.0"
+            "version": "1.68.1"
           },
           {
             "name": "libpsl",
