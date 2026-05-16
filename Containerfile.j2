@@ -1,9 +1,11 @@
 ARG BASE_VERSION=15
+ARG BUILD_BASE_VERSION=15-latest
 ARG UPSTREAM_URL="https://api.github.com/repos/rustmailer/bichon/releases/latest"
 ARG UPSTREAM_JQ=".tag_name"
 
 # --- Backend Builder Stage ---
-FROM ghcr.io/daemonless/base:${BASE_VERSION} AS builder
+# Use 15-latest for rust 1.95+ required by bichon 1.0.0 (sysinfo@0.39.1)
+FROM ghcr.io/daemonless/base:${BUILD_BASE_VERSION} AS builder
 
 ARG FREEBSD_ARCH=amd64
 ARG BUILD_PACKAGES="rust pkgconf git-lite FreeBSD-toolchain FreeBSD-openssl-dev zstd FreeBSD-set-devel cmake"
@@ -25,7 +27,7 @@ RUN BICHON_TAG=$(git ls-remote --tags --sort="v:refname" https://github.com/rust
 COPY web/dist /build/web/dist
 
 # Build Backend
-RUN cargo build --release --bin bichon --bin bichonctl --bin bichon-admin
+RUN cargo build --release --bin bichon-server --bin bichon-cli --bin bichon-admin
 
 # --- Runtime Stage ---
 FROM ghcr.io/daemonless/base:${BASE_VERSION}
@@ -57,8 +59,8 @@ RUN pkg update && \
 
 # Copy binaries and version from builder
 COPY --from=builder /build/version /app/version
-COPY --from=builder /build/target/release/bichon /usr/local/bin/
-COPY --from=builder /build/target/release/bichonctl /usr/local/bin/
+COPY --from=builder /build/target/release/bichon-server /usr/local/bin/
+COPY --from=builder /build/target/release/bichon-cli /usr/local/bin/
 COPY --from=builder /build/target/release/bichon-admin /usr/local/bin/
 
 # Copy root filesystem

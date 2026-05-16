@@ -9,7 +9,7 @@ ROOT_DIR="${BICHON_ROOT_DIR:-/data}"
 
 # Standard start command for bichon
 # Note: --bichon-http-bind-address is not supported in this version
-exec /usr/local/bin/bichon \
+exec /usr/local/bin/bichon-server \
     --bichon-http-port "$PORT" \
     --bichon-root-dir "$ROOT_DIR" \
     --bichon-http-compression-enabled

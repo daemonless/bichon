@@ -130,8 +130,6 @@ podman run -d --name bichon \
       - "/path/to/containers/bichon/data:/data"
 ```
 
-Access at: `http://localhost:15630`
-
 ## Parameters
 
 ### Environment Variables
