@@ -1,11 +1,11 @@
 {
-  "generated": "2026-06-08T21:43:27Z",
+  "generated": "2026-06-09T08:39:09Z",
   "image": "bichon",
   "tags": {
     "latest": {
       "app_version": "1.5.2",
       "arch": "amd64",
-      "generated": "2026-06-08T21:42:08Z",
+      "generated": "2026-06-09T08:37:38Z",
       "packages": {
         "dotnet": [],
         "freebsd": [
