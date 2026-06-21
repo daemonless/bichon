@@ -73,6 +73,7 @@ services:
     name: bichon
     options:
       - container: 'boot args:--pull'
+      - expose="15630:15630 proto:tcp" \
     oci:
       user: root
       environment:
@@ -95,6 +96,7 @@ ARG tag=latest
 OPTION overwrite=force
 OPTION from=ghcr.io/daemonless/bichon:${tag}
 ```
+**Note**: Exposing ports in AppJail means that your service can be reached from remote hosts. If that is not your intention, do not expose the ports and communicate with the service using the IPv4 address assigned by the virtual network.
 
 ### Podman CLI
 
@@ -109,6 +111,24 @@ podman run -d --name bichon \
   -v /path/to/containers/bichon/data:/data \
   ghcr.io/daemonless/bichon:latest
 ```
+
+### AppJail
+
+```bash
+appjail oci run -Pd \
+  -o overwrite=force \
+  -o container="args:--pull" \
+  -o virtualnet=":<random> default" \
+  -o nat \
+  -o expose="15630:15630 proto:tcp" \
+  -e PUID=1000 \
+  -e PGID=1000 \
+  -e TZ=UTC \
+  -e BICHON_ENCRYPT_PASSWORD=changeme \
+  -o fstab="/path/to/containers/bichon/data /data <pseudofs>" \
+  ghcr.io/daemonless/bichon:latest bichon
+```
+**Note**: Exposing ports in AppJail means that your service can be reached from remote hosts. If that is not your intention, do not expose the ports and communicate with the service using the IPv4 address assigned by the virtual network.
 
 ### Ansible
 
