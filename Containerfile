@@ -4,8 +4,8 @@
 # Source: Containerfile.j2
 # --------------------------------------------------------------------------
 
-ARG BASE_VERSION=15
-ARG BUILD_BASE_VERSION=15-latest
+ARG BASE_VERSION=15.1
+ARG BUILD_BASE_VERSION=15.1-latest
 ARG UPSTREAM_URL="https://api.github.com/repos/rustmailer/bichon/releases/latest"
 ARG UPSTREAM_JQ=".tag_name"
 

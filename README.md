@@ -34,17 +34,17 @@ Before deploying, ensure your host environment is ready. See the [Quick Start Gu
 ```yaml
 services:
   bichon:
-    image: ghcr.io/daemonless/bichon:latest
+    image: "ghcr.io/daemonless/bichon:latest"
     container_name: bichon
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=UTC
-      - BICHON_ENCRYPT_PASSWORD=changeme
+      - PUID=1000  # User ID for the application process
+      - PGID=1000  # Group ID for the application process
+      - TZ=UTC  # Timezone for the container
+      - BICHON_ENCRYPT_PASSWORD=changeme  # Encryption password for core database
     volumes:
       - "/path/to/containers/bichon/data:/data"
     ports:
-      - 15630:15630
+      - "15630:15630"
     healthcheck:
       test: ["CMD", "{'port': 15630, 'path': '/'}"]
     restart: unless-stopped
@@ -116,7 +116,7 @@ podman run -d --name bichon \
 - name: Deploy bichon
   containers.podman.podman_container:
     name: bichon
-    image: ghcr.io/daemonless/bichon:latest
+    image: "ghcr.io/daemonless/bichon:latest"
     state: started
     restart_policy: always
     env:
@@ -129,6 +129,8 @@ podman run -d --name bichon \
     volumes:
       - "/path/to/containers/bichon/data:/data"
 ```
+
+Access at: `http://localhost:15630`
 
 ## Parameters
 
