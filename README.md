@@ -18,13 +18,11 @@ A lightweight, high-performance Rust email archiver with WebUI.
 | **Website** | [https://github.com/rustmailer/bichon](https://github.com/rustmailer/bichon) |
 
 ## Version Tags
-
 | Tag | Description | Best For |
 | :--- | :--- | :--- |
-| `latest` | **Upstream Binary**. Built from official release. | Most users. Matches Linux Docker behavior. |
+| `latest` | **Upstream Binary**. Built from official release. | Most users — recommended. |
 
 ## Prerequisites
-
 Before deploying, ensure your host environment is ready. See the [Quick Start Guide](https://daemonless.io/guides/quick-start) for host setup instructions.
 
 ## Deployment
@@ -41,8 +39,9 @@ services:
       - PGID=1000  # Group ID for the application process
       - TZ=UTC  # Timezone for the container
       - BICHON_ENCRYPT_PASSWORD=changeme  # Encryption password for core database
+      - BICHON_HTTP_PORT=  # HTTP server port (default: 15630)
     volumes:
-      - "/path/to/containers/bichon/data:/data"
+      - "/path/to/containers/bichon:/data"
     ports:
       - "15630:15630"
     healthcheck:
@@ -51,20 +50,24 @@ services:
 ```
 
 ### AppJail Director
-
 **.env**:
 
 ```
+# .env
+
 DIRECTOR_PROJECT=bichon
 PUID=1000
 PGID=1000
 TZ=UTC
 BICHON_ENCRYPT_PASSWORD=changeme
+BICHON_HTTP_PORT=
 ```
 
 **appjail-director.yml**:
 
 ```yaml
+# appjail-director.yml
+
 options:
   - virtualnet: ':<random> default'
   - nat:
@@ -73,7 +76,7 @@ services:
     name: bichon
     options:
       - container: 'boot args:--pull'
-      - expose="15630:15630 proto:tcp" \
+      - expose: '15630:15630 proto:tcp'
     oci:
       user: root
       environment:
@@ -81,16 +84,19 @@ services:
         - PGID: !ENV '${PGID}'
         - TZ: !ENV '${TZ}'
         - BICHON_ENCRYPT_PASSWORD: !ENV '${BICHON_ENCRYPT_PASSWORD}'
+        - BICHON_HTTP_PORT: !ENV '${BICHON_HTTP_PORT}'
     volumes:
-      - bichon_data: /data
+      - bichon: /data
 volumes:
-  bichon_data:
-    device: '/path/to/containers/bichon/data'
+  bichon:
+    device: '/path/to/containers/bichon'
 ```
 
 **Makejail**:
 
 ```
+# Makejail
+
 ARG tag=latest
 
 OPTION overwrite=force
@@ -108,7 +114,8 @@ podman run -d --name bichon \
   -e PGID=1000 \
   -e TZ=UTC \
   -e BICHON_ENCRYPT_PASSWORD=changeme \
-  -v /path/to/containers/bichon/data:/data \
+  -e BICHON_HTTP_PORT= \
+  -v /path/to/containers/bichon:/data \
   ghcr.io/daemonless/bichon:latest
 ```
 
@@ -125,7 +132,8 @@ appjail oci run -Pd \
   -e PGID=1000 \
   -e TZ=UTC \
   -e BICHON_ENCRYPT_PASSWORD=changeme \
-  -o fstab="/path/to/containers/bichon/data /data <pseudofs>" \
+  -e BICHON_HTTP_PORT= \
+  -o fstab="/path/to/containers/bichon /data <pseudofs>" \
   ghcr.io/daemonless/bichon:latest bichon
 ```
 **Note**: Exposing ports in AppJail means that your service can be reached from remote hosts. If that is not your intention, do not expose the ports and communicate with the service using the IPv4 address assigned by the virtual network.
@@ -144,10 +152,11 @@ appjail oci run -Pd \
       PGID: "1000"
       TZ: "UTC"
       BICHON_ENCRYPT_PASSWORD: "changeme"
+      BICHON_HTTP_PORT: ""
     ports:
       - "15630:15630"
     volumes:
-      - "/path/to/containers/bichon/data:/data"
+      - "/path/to/containers/bichon:/data"
 ```
 
 Access at: `http://localhost:15630`
@@ -162,6 +171,7 @@ Access at: `http://localhost:15630`
 | `PGID` | `1000` | Group ID for the application process |
 | `TZ` | `UTC` | Timezone for the container |
 | `BICHON_ENCRYPT_PASSWORD` | `changeme` | Encryption password for core database |
+| `BICHON_HTTP_PORT` | `` | HTTP server port (default: 15630) |
 
 ### Volumes
 
