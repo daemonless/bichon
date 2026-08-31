@@ -46,8 +46,11 @@ services:
       - "15630:15630"
     healthcheck:
       test: ["CMD", "{'port': 15630, 'path': '/'}"]
-    restart: unless-stopped
+    # always (not unless-stopped) so FreeBSD's podman rc.d auto-starts it at boot
+    restart: always
 ```
+
+Save as `compose.yaml`, then run `podman-compose up -d`.
 
 ### AppJail Director
 **.env**:
@@ -102,6 +105,9 @@ ARG tag=latest
 OPTION overwrite=force
 OPTION from=ghcr.io/daemonless/bichon:${tag}
 ```
+
+Save the files above, then run `appjail-director up`.
+
 **Note**: Exposing ports in AppJail means that your service can be reached from remote hosts. If that is not your intention, do not expose the ports and communicate with the service using the IPv4 address assigned by the virtual network.
 
 ### Podman CLI
@@ -118,6 +124,8 @@ podman run -d --name bichon \
   -v /path/to/containers/bichon:/data \
   ghcr.io/daemonless/bichon:latest
 ```
+
+Save as `run.sh`, then run `sh run.sh`.
 
 ### AppJail
 
@@ -136,7 +144,42 @@ appjail oci run -Pd \
   -o fstab="/path/to/containers/bichon /data <pseudofs>" \
   ghcr.io/daemonless/bichon:latest bichon
 ```
+
+Save as `run.sh`, then run `sh run.sh`.
+
 **Note**: Exposing ports in AppJail means that your service can be reached from remote hosts. If that is not your intention, do not expose the ports and communicate with the service using the IPv4 address assigned by the virtual network.
+
+### Bastille
+
+> [!WARNING]
+> Bastille's OCI support is **experimental**. It requires `buildah`, shares the host network stack (`inherit`), and persists image-declared volumes under `--data-path`.
+
+```yaml
+services:
+  bichon:
+    image: "ghcr.io/daemonless/bichon:latest"
+    container_name: bichon
+    network_mode: host  # jail shares host networking
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=UTC
+      - BICHON_ENCRYPT_PASSWORD=changeme
+      - BICHON_HTTP_PORT=
+```
+
+Save as `podman-compose.yml`, then run `bastille up`. Or via CLI:
+
+```bash
+bastille create -O \
+  --env PUID=1000 \
+  --env PGID=1000 \
+  --env TZ=UTC \
+  --env BICHON_ENCRYPT_PASSWORD=changeme \
+  --env BICHON_HTTP_PORT= \
+  --data-path /path/to/containers/bichon \
+  bichon ghcr.io/daemonless/bichon:latest inherit
+```
 
 ### Ansible
 
@@ -158,6 +201,8 @@ appjail oci run -Pd \
     volumes:
       - "/path/to/containers/bichon:/data"
 ```
+
+Save as `bichon-deploy.yaml`, then run `ansible-playbook bichon-deploy.yaml`.
 
 Access at: `http://localhost:15630`
 

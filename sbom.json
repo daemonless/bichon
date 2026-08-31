@@ -1,11 +1,11 @@
 {
-  "generated": "2026-08-19T14:56:57Z",
+  "generated": "2026-08-31T22:27:51Z",
   "image": "bichon",
   "tags": {
     "latest": {
       "app_version": "2.0.2",
       "arch": "amd64",
-      "generated": "2026-08-19T14:56:22Z",
+      "generated": "2026-08-31T22:27:15Z",
       "packages": {
         "dotnet": [],
         "freebsd": [
@@ -147,7 +147,7 @@
               "BSD2CLAUSE"
             ],
             "name": "FreeBSD-openssl-lib",
-            "version": "15.1"
+            "version": "15.1p3"
           },
           {
             "licenses": [
@@ -175,7 +175,7 @@
               "BSD2CLAUSE"
             ],
             "name": "FreeBSD-runtime",
-            "version": "15.1p2"
+            "version": "15.1p3"
           },
           {
             "licenses": [
@@ -245,7 +245,7 @@
               "MPL20"
             ],
             "name": "ca_root_nss",
-            "version": "3.125"
+            "version": "3.127"
           },
           {
             "licenses": [
