@@ -7,6 +7,7 @@ Source: dbuild templates
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/daemonless/bichon/build.yaml?style=flat-square&label=Build&color=green)](https://github.com/daemonless/bichon/actions)
 [![Last Commit](https://img.shields.io/github/last-commit/daemonless/bichon?style=flat-square&label=Last+Commit&color=blue)](https://github.com/daemonless/bichon/commits)
+[![OCI Pulls](https://img.shields.io/docker/pulls/daemonless/bichon?style=flat-square&label=OCI+Pulls&color=blue)](https://hub.docker.com/r/daemonless/bichon)
 
 A lightweight, high-performance Rust email archiver with WebUI.
 
@@ -78,7 +79,7 @@ services:
   bichon:
     name: bichon
     options:
-      - container: 'boot args:--pull'
+      - container: 'args:--pull'
       - expose: '15630:15630 proto:tcp'
     oci:
       user: root
@@ -102,13 +103,18 @@ volumes:
 
 ARG tag=latest
 
+OPTION container=boot
 OPTION overwrite=force
 OPTION from=ghcr.io/daemonless/bichon:${tag}
 ```
 
 Save the files above, then run `appjail-director up`.
 
-**Note**: Exposing ports in AppJail means that your service can be reached from remote hosts. If that is not your intention, do not expose the ports and communicate with the service using the IPv4 address assigned by the virtual network.
+
+> [!WARNING]
+> Exposing ports in AppJail means that your service can be reached from remote hosts. If that is not your intention, do not expose the ports and communicate with the service using the jail's IPv4 address or hostname assigned by the virtual network.
+>
+> To avoid exposing ports, just remove the `expose` option in your `appjail-director.yml` or from your command-line arguments.
 
 ### Podman CLI
 
@@ -129,6 +135,7 @@ Save as `run.sh`, then run `sh run.sh`.
 
 ### AppJail
 
+
 ```bash
 appjail oci run -Pd \
   -o overwrite=force \
@@ -145,30 +152,37 @@ appjail oci run -Pd \
   ghcr.io/daemonless/bichon:latest bichon
 ```
 
-Save as `run.sh`, then run `sh run.sh`.
+Save the files above, then run `sh run.sh`.
 
-**Note**: Exposing ports in AppJail means that your service can be reached from remote hosts. If that is not your intention, do not expose the ports and communicate with the service using the IPv4 address assigned by the virtual network.
+
+> [!WARNING]
+> Exposing ports in AppJail means that your service can be reached from remote hosts. If that is not your intention, do not expose the ports and communicate with the service using the jail's IPv4 address or hostname assigned by the virtual network.
+>
+> To avoid exposing ports, just remove the `expose` option in your `appjail-director.yml` or from your command-line arguments.
 
 ### Bastille
 
 > [!WARNING]
-> Bastille's OCI support is **experimental**. It requires `buildah`, shares the host network stack (`inherit`), and persists image-declared volumes under `--data-path`.
+> Bastille's OCI support is **experimental**. It requires `buildah` and shares the host network stack (`inherit`). Mount volumes with `--volume HOST JAIL`; without it, image-declared volumes are stored under `${bastille_volumesdir}/${jail}`.
 
 ```yaml
 services:
   bichon:
+    name: bichon
     image: "ghcr.io/daemonless/bichon:latest"
-    container_name: bichon
-    network_mode: host  # jail shares host networking
+    network:
+      - mode: host
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=UTC
       - BICHON_ENCRYPT_PASSWORD=changeme
       - BICHON_HTTP_PORT=
+    volumes:
+      - "/path/to/containers/bichon:/data"
 ```
 
-Save as `podman-compose.yml`, then run `bastille up`. Or via CLI:
+Save as `bastille-compose.yml`, then run `bastille up`. Or via CLI:
 
 ```bash
 bastille create -O \
@@ -177,7 +191,7 @@ bastille create -O \
   --env TZ=UTC \
   --env BICHON_ENCRYPT_PASSWORD=changeme \
   --env BICHON_HTTP_PORT= \
-  --data-path /path/to/containers/bichon \
+  --volume /path/to/containers/bichon /data \
   bichon ghcr.io/daemonless/bichon:latest inherit
 ```
 
