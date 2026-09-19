@@ -21,16 +21,16 @@ jobs:
           echo "tag=${BICHON_TAG}" >> $GITHUB_OUTPUT
 
       - name: Checkout rustmailer/bichon
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: rustmailer/bichon
           ref: ${{ steps.tag.outputs.tag }}
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
 
@@ -38,7 +38,7 @@ jobs:
         run: cd web && pnpm install && pnpm run build
 
       - name: Upload web/dist
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: web-dist
           path: web/dist/
