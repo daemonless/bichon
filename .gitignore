@@ -5,6 +5,3 @@ target/
 # OS files
 .DS_Store
 Thumbs.db
-
-# web/dist is built by CI (build-web job) and passed as an artifact
-web/dist/

@@ -3,6 +3,48 @@ ARG BUILD_BASE_VERSION=15.1-latest
 ARG UPSTREAM_URL="https://api.github.com/repos/rustmailer/bichon/releases/latest"
 ARG UPSTREAM_JQ=".tag_name"
 
+# --- Source Stage ---
+# One tag for frontend and backend, from the same releases/latest the version
+# check reads. "Highest git tag" would pick pre-releases (2.0.1-alpha.1 sorts
+# after 2.0.1).
+FROM ghcr.io/daemonless/base:${BUILD_BASE_VERSION} AS source
+
+ARG UPSTREAM_URL
+ARG UPSTREAM_JQ
+
+RUN pkg update && \
+    pkg install -y git-lite
+
+RUN BICHON_TAG=$(fetch -qo - "${UPSTREAM_URL}" | jq -r "${UPSTREAM_JQ}") && \
+    test -n "${BICHON_TAG}" -a "${BICHON_TAG}" != "null" && \
+    echo "Building tag: ${BICHON_TAG}" && \
+    git clone --depth 1 -b "${BICHON_TAG}" https://github.com/rustmailer/bichon.git /src && \
+    echo "${BICHON_TAG}" > /src/version
+
+# --- Frontend Builder Stage ---
+FROM ghcr.io/daemonless/base:${BUILD_BASE_VERSION} AS frontend
+
+ARG PNPM_VERSION=9
+
+RUN pkg update && \
+    pkg install -y node24 npm-node24 && \
+    npm install -g "pnpm@${PNPM_VERSION}"
+
+COPY --from=source /src/web /build/web
+WORKDIR /build/web
+
+# @vitejs/plugin-react-swc needs SWC, which has no FreeBSD binary. Upstream
+# calls react() with no options, so the Babel plugin is a drop-in; the grep
+# fails the build if upstream's import changes and the sed stops matching.
+# Adding it only appends to the lockfile (no locked version moves).
+# NODE_OPTIONS: arm64 FreeBSD caps RLIMIT_DATA at 1 GB and Node sizes its
+# default heap from it.
+RUN pnpm install --frozen-lockfile && \
+    pnpm add -D @vitejs/plugin-react@4.7.0 && \
+    sed -i '' "s#'@vitejs/plugin-react-swc'#'@vitejs/plugin-react'#" vite.config.ts && \
+    grep -q "from '@vitejs/plugin-react'" vite.config.ts && \
+    NODE_OPTIONS=--max-old-space-size=4096 pnpm run build
+
 # --- Backend Builder Stage ---
 # Use 15-latest for rust 1.95+ required by bichon 1.0.0 (sysinfo@0.39.1)
 FROM ghcr.io/daemonless/base:${BUILD_BASE_VERSION} AS builder
@@ -14,17 +56,11 @@ ARG BUILD_PACKAGES="rust pkgconf git-lite FreeBSD-toolchain FreeBSD-openssl-dev 
 RUN pkg update && \
     pkg install -y ${BUILD_PACKAGES}
 
-# Clone Bichon (fetching the latest tag)
+COPY --from=source /src /build
 WORKDIR /build
-RUN BICHON_TAG=$(git ls-remote --tags --sort="v:refname" https://github.com/rustmailer/bichon.git | tail -n1 | sed 's/.*\///') && \
-    echo "Building tag: ${BICHON_TAG}" && \
-    git clone --depth 1 -b "${BICHON_TAG}" https://github.com/rustmailer/bichon.git . && \
-    echo "${BICHON_TAG}" > /build/version
 
-# Note: Frontend build (web/dist) is built on Linux in the build-web CI job
-# and passed as an artifact to this stage. SWC is not available on FreeBSD.
-# This folder is embedded into the Rust binary at compile time.
-COPY web/dist /build/web/dist
+# web/dist is embedded into the Rust binary at compile time.
+COPY --from=frontend /build/web/dist /build/web/dist
 
 # Build Backend
 RUN cargo build --release --bin bichon-server --bin bichon-cli --bin bichon-admin
