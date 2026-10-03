@@ -42,7 +42,7 @@ services:
       - BICHON_ENCRYPT_PASSWORD=changeme  # Encryption password for core database
       - BICHON_HTTP_PORT=  # HTTP server port (default: 15630)
     volumes:
-      - "/path/to/containers/bichon:/data"
+      - "/containers/bichon:/data"
     ports:
       - "15630:15630"
     healthcheck:
@@ -93,7 +93,7 @@ services:
       - bichon: /data
 volumes:
   bichon:
-    device: '/path/to/containers/bichon'
+    device: '/containers/bichon'
 ```
 
 **Makejail**:
@@ -109,50 +109,6 @@ OPTION from=ghcr.io/daemonless/bichon:${tag}
 ```
 
 Save the files above, then run `appjail-director up`.
-
-
-> [!WARNING]
-> Exposing ports in AppJail means that your service can be reached from remote hosts. If that is not your intention, do not expose the ports and communicate with the service using the jail's IPv4 address or hostname assigned by the virtual network.
->
-> To avoid exposing ports, just remove the `expose` option in your `appjail-director.yml` or from your command-line arguments.
-
-### Podman CLI
-
-```bash
-podman run -d --name bichon \
-  -p 15630:15630 \
-  --health-cmd {'port': 15630, 'path': '/'} \
-  -e PUID=1000 \
-  -e PGID=1000 \
-  -e TZ=UTC \
-  -e BICHON_ENCRYPT_PASSWORD=changeme \
-  -e BICHON_HTTP_PORT= \
-  -v /path/to/containers/bichon:/data \
-  ghcr.io/daemonless/bichon:latest
-```
-
-Save as `run.sh`, then run `sh run.sh`.
-
-### AppJail
-
-
-```bash
-appjail oci run -Pd \
-  -o overwrite=force \
-  -o container="args:--pull" \
-  -o virtualnet=":<random> default" \
-  -o nat \
-  -o expose="15630:15630 proto:tcp" \
-  -e PUID=1000 \
-  -e PGID=1000 \
-  -e TZ=UTC \
-  -e BICHON_ENCRYPT_PASSWORD=changeme \
-  -e BICHON_HTTP_PORT= \
-  -o fstab="/path/to/containers/bichon /data <pseudofs>" \
-  ghcr.io/daemonless/bichon:latest bichon
-```
-
-Save the files above, then run `sh run.sh`.
 
 
 > [!WARNING]
@@ -179,44 +135,10 @@ services:
       - BICHON_ENCRYPT_PASSWORD=changeme
       - BICHON_HTTP_PORT=
     volumes:
-      - "/path/to/containers/bichon:/data"
+      - "/containers/bichon:/data"
 ```
 
-Save as `bastille-compose.yml`, then run `bastille up`. Or via CLI:
-
-```bash
-bastille create -O \
-  --env PUID=1000 \
-  --env PGID=1000 \
-  --env TZ=UTC \
-  --env BICHON_ENCRYPT_PASSWORD=changeme \
-  --env BICHON_HTTP_PORT= \
-  --volume /path/to/containers/bichon /data \
-  bichon ghcr.io/daemonless/bichon:latest inherit
-```
-
-### Ansible
-
-```yaml
-- name: Deploy bichon
-  containers.podman.podman_container:
-    name: bichon
-    image: "ghcr.io/daemonless/bichon:latest"
-    state: started
-    restart_policy: always
-    env:
-      PUID: "1000"
-      PGID: "1000"
-      TZ: "UTC"
-      BICHON_ENCRYPT_PASSWORD: "changeme"
-      BICHON_HTTP_PORT: ""
-    ports:
-      - "15630:15630"
-    volumes:
-      - "/path/to/containers/bichon:/data"
-```
-
-Save as `bichon-deploy.yaml`, then run `ansible-playbook bichon-deploy.yaml`.
+Save as `bastille-compose.yml`, then run `bastille up`.
 
 Access at: `http://localhost:15630`
 
