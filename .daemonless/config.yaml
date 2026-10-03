@@ -6,5 +6,6 @@ build:
 
 cit:
   mode: screenshot
+  ready: "Bichon Service is now running"
   port: 15630
   health: /

@@ -14,7 +14,7 @@ x-daemonless:
   healthcheck:
     port: 15630
     path: "/"
-  
+
   docs:
     env:
       PUID: "User ID for the application process"
@@ -32,7 +32,7 @@ services:
     image: ghcr.io/daemonless/bichon:latest
     container_name: bichon
     restart: unless-stopped
-    
+
     environment:
       - PUID=1000
       - PGID=1000
