@@ -40,7 +40,7 @@ services:
       - PGID=1000  # Group ID for the application process
       - TZ=UTC  # Timezone for the container
       - BICHON_ENCRYPT_PASSWORD=changeme  # Encryption password for core database
-      - BICHON_HTTP_PORT=  # HTTP server port (default: 15630)
+      # - BICHON_HTTP_PORT=  # HTTP server port (default: 15630)
     volumes:
       - "/containers/bichon:/data"
     ports:
@@ -64,7 +64,6 @@ PUID=1000
 PGID=1000
 TZ=UTC
 BICHON_ENCRYPT_PASSWORD=changeme
-BICHON_HTTP_PORT=
 ```
 
 **appjail-director.yml**:
@@ -88,7 +87,6 @@ services:
         - PGID: !ENV '${PGID}'
         - TZ: !ENV '${TZ}'
         - BICHON_ENCRYPT_PASSWORD: !ENV '${BICHON_ENCRYPT_PASSWORD}'
-        - BICHON_HTTP_PORT: !ENV '${BICHON_HTTP_PORT}'
     volumes:
       - bichon: /data
 volumes:
@@ -133,7 +131,6 @@ services:
       - PGID=1000
       - TZ=UTC
       - BICHON_ENCRYPT_PASSWORD=changeme
-      - BICHON_HTTP_PORT=
     volumes:
       - "/containers/bichon:/data"
 ```
