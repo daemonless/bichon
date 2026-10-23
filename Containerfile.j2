@@ -7,7 +7,7 @@ ARG UPSTREAM_JQ=".tag_name"
 # One tag for frontend and backend, from the same releases/latest the version
 # check reads. "Highest git tag" would pick pre-releases (2.0.1-alpha.1 sorts
 # after 2.0.1).
-FROM ghcr.io/daemonless/base:${BUILD_BASE_VERSION} AS source
+FROM ghcr.io/daemonless/base-exec:${BUILD_BASE_VERSION} AS source
 
 ARG UPSTREAM_URL
 ARG UPSTREAM_JQ
@@ -22,7 +22,7 @@ RUN BICHON_TAG=$(fetch -qo - "${UPSTREAM_URL}" | jq -r "${UPSTREAM_JQ}") && \
     echo "${BICHON_TAG}" > /src/version
 
 # --- Frontend Builder Stage ---
-FROM ghcr.io/daemonless/base:${BUILD_BASE_VERSION} AS frontend
+FROM ghcr.io/daemonless/base-exec:${BUILD_BASE_VERSION} AS frontend
 
 ARG PNPM_VERSION=9
 
@@ -47,7 +47,7 @@ RUN pnpm install --frozen-lockfile && \
 
 # --- Backend Builder Stage ---
 # Use 15-latest for rust 1.95+ required by bichon 1.0.0 (sysinfo@0.39.1)
-FROM ghcr.io/daemonless/base:${BUILD_BASE_VERSION} AS builder
+FROM ghcr.io/daemonless/base-exec:${BUILD_BASE_VERSION} AS builder
 
 ARG FREEBSD_ARCH=amd64
 ARG BUILD_PACKAGES="rust pkgconf git-lite FreeBSD-toolchain FreeBSD-openssl-dev zstd FreeBSD-set-devel cmake"
