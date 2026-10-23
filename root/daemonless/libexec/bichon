@@ -1,5 +1,5 @@
 #!/bin/sh
-# Bichon s6 service
+# Start bichon; /init has already dropped to the run user.
 
 echo "[INFO] Starting Bichon..."
 

@@ -72,7 +72,7 @@ COPY --from=frontend /build/web/dist /build/web/dist
 RUN cargo build --release --bin bichon-server --bin bichon-cli --bin bichon-admin
 
 # --- Runtime Stage ---
-FROM ghcr.io/daemonless/base:${BASE_VERSION}
+FROM ghcr.io/daemonless/base-exec:${BASE_VERSION}
 
 ARG FREEBSD_ARCH=amd64
 ARG UPSTREAM_URL
@@ -107,9 +107,13 @@ COPY --from=builder /build/target/release/bichon-admin /usr/local/bin/
 
 # Copy root filesystem
 COPY root/ /
+RUN chmod +x /daemonless/libexec/bichon
+
+ENV DAEMONLESS_USER=root
+CMD ["/daemonless/libexec/bichon"]
 
 # Set permissions
-RUN chmod +x /etc/services.d/bichon/run /healthz && \
+RUN chmod +x /healthz && \
     mkdir -p /data
 
 # Working directory for Bichon
