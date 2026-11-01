@@ -1,11 +1,11 @@
 {
-  "generated": "2026-10-23T10:32:13Z",
+  "generated": "2026-11-01T08:29:10Z",
   "image": "bichon",
   "tags": {
     "latest": {
-      "app_version": "2.2.0",
+      "app_version": "2.3.0",
       "arch": "amd64",
-      "generated": "2026-10-23T10:31:41Z",
+      "generated": "2026-11-01T08:28:34Z",
       "packages": {
         "dotnet": [],
         "freebsd": [
@@ -189,7 +189,7 @@
               "BSD2CLAUSE"
             ],
             "name": "FreeBSD-runtime",
-            "version": "15.1p5"
+            "version": "15.1p6"
           },
           {
             "licenses": [
@@ -252,21 +252,21 @@
               "MIT"
             ],
             "name": "brotli",
-            "version": "1.2.0,1"
+            "version": "1.2.1,1"
           },
           {
             "licenses": [
               "MPL20"
             ],
             "name": "ca_root_nss",
-            "version": "3.131"
+            "version": "3.132"
           },
           {
             "licenses": [
               "MIT"
             ],
             "name": "curl",
-            "version": "8.22.0"
+            "version": "8.23.0"
           },
           {
             "licenses": [
