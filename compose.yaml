@@ -43,6 +43,4 @@ services:
       - /path/to/containers/bichon:/data
 
     ports:
-      - published: 15630
-        target: 15630
-
+      - "15630:15630"
