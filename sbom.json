@@ -1,11 +1,11 @@
 {
-  "generated": "2026-11-16T11:16:05Z",
+  "generated": "2026-11-18T22:56:57Z",
   "image": "bichon",
   "tags": {
     "latest": {
-      "app_version": "2.4.2",
+      "app_version": "2.4.3",
       "arch": "amd64",
-      "generated": "2026-11-16T11:15:20Z",
+      "generated": "2026-11-18T22:56:09Z",
       "packages": {
         "dotnet": [],
         "freebsd": [
@@ -147,7 +147,7 @@
               "BSD2CLAUSE"
             ],
             "name": "FreeBSD-openssl",
-            "version": "15.1"
+            "version": "15.1p7"
           },
           {
             "licenses": [
